@@ -1,4 +1,5 @@
-# Fit interaction terms in a stratified Cox regression model
+# Fit interaction terms in a stratified multivariable Cox regression model
+# For now, the function only fits interaction between a continuous exposure and a categorical covariate
 
 
 Cox_interaction_data <- 
@@ -6,11 +7,11 @@ Cox_interaction_data <-
   function(
     
     dataset,
-    main_exposure_var,                         # Character vector of length 1. Only accepts numeric exposures
-    nominal_interaction_vars    = NULL,           # An LR test for heterogeneity will be performed for interaction 
-    nominal_labels              = NULL,           # Vector of labels to be used for nominal variables. e.g., c("Age, years")
-    ordinal_interaction_vars    = NULL,           # An LR test for trend will be performed for interaction 
-    ordinal_labels              = NULL,
+    main_exposure_var,                         # Character vector of length 1 indicating the name of the main exposure. Only accepts numeric exposures
+    nominal_interaction_vars    = NULL,        # Character vector of length >= 1. An LR test for heterogeneity will be performed for interaction 
+    nominal_labels              = NULL,        # Vector of labels to be used for nominal interaction variables. e.g., c("Age, years")
+    ordinal_interaction_vars    = NULL,        # Character vector of length >= 1. An LR test for trend will be performed for interaction 
+    ordinal_labels              = NULL,        
     multiple_interaction_vars   = NULL,        # To stratify by more than one subgroup
     test_interaction            = TRUE,        # Perform test for interaction by default
     correct_regression_dilution = FALSE,        
@@ -23,6 +24,7 @@ Cox_interaction_data <-
     adjustment_vars             = c("age")   # Function will not adjust for variables used for subgroup analysis 
     
   ) {
+
     
   # Load function for interaction tests -- 
     
