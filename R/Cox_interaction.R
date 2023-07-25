@@ -1,6 +1,8 @@
 # Fit interaction terms in a stratified multivariable Cox regression model
 # For now, the function only fits interaction between a continuous exposure and a categorical covariate
 
+# Note: `nominal_interaction_vars` and ordinal_interaction_vars` can be supplied at the same. 
+
 
 Cox_interaction_data <- 
   
