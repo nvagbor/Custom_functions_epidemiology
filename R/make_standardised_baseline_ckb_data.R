@@ -22,8 +22,8 @@ make_standardised_ckb_data <- function(dataset,
   
     if(missing(main_exposure)) stop("please enter `main exposure`")
       
-    if(is.numeric(dataset[[main_exposure]]) | is.integer(dataset[[main_exposure]])) {
-      stop("The `main exposure` cannot be a numeric or integer vector")  
+    if(!is.factor(dataset[[main_exposure]])) {
+      stop("The `main exposure` must be a factor")  
       }
   
   
@@ -73,26 +73,21 @@ if(!is.null(numeric_vars)){
         
         # Wrangling 
         transmute(
-          
-          cat_var_lab = !!sym(paste0(num_var_temp, ".levels")),
+          cat_var_lab = !!rlang::sym(paste0(num_var_temp, ".levels")),
           stdev       = !!sym(paste0(num_var_temp, ".se")) * sqrt( !!sym(paste0(num_var_temp, ".N.Freq")) ), 
-          mean_sd     = paste0(round( !!sym(paste0(num_var_temp, ".mean")) , n_decimals), " (", 
-                               round(stdev, n_decimals), ")"
-          )
-          
-        )  %>% 
-        
+          mean_sd     = paste0(round( !!sym(paste0(num_var_temp, ".mean")), n_decimals), 
+                               " (", round(stdev, n_decimals), ")")
+          )  %>% 
         select(-stdev) %>% 
-        
-        pivot_wider(names_from = cat_var_lab, values_from = mean_sd) %>% 
-        
-        mutate(exposure = num_var_temp, 
-               all      = paste0(round(mean(dataset_temp [ , num_var_temp], na.rm = TRUE), n_decimals), " (", 
-                                 round(sd  (dataset_temp [ , num_var_temp], na.rm = TRUE), n_decimals), ")")
-        ) %>% 
-        
-        relocate(.before = 1, exposure)
       
+        tidyr::pivot_wider(names_from = cat_var_lab, values_from = mean_sd) %>% 
+      
+        mutate(
+          exposure = num_var_temp, 
+          all = paste0(round(mean(dataset_temp [ , num_var_temp], na.rm = TRUE), n_decimals), 
+                       " (", round(sd  (dataset_temp [ , num_var_temp], na.rm = TRUE), n_decimals), ")")
+          ) %>% 
+        relocate(.before = 1, exposure)
       
       # Assign labels 
       if(!is.null(numeric_vars_labels)) {numeric_vars_df[[nv]]$exposure <- numeric_vars_labels[[nv]]}
@@ -146,10 +141,10 @@ if(!is.null(categorical_vars)){
         
       ) %>% 
       
-      dplyr::mutate_at(vars(contains("proportion")), ~round(.*100, n_decimals)) %>% 
+      dplyr::mutate(across(contains("proportion"), ~round(.*100, n_decimals)) %>% 
       
       select(contains(c("levels", "Freq", "proportion"))) %>% 
-      `row.names<-` (paste0("Q", 1:length(unique(dataset_temp[[main_exposure]])) )) %>%  
+      `row.names<-` (levels (dataset_temp[[main_exposure]]) %>%  
       t(.) %>% 
       
       `row.names<-` (
@@ -172,7 +167,7 @@ if(!is.null(categorical_vars)){
           
           cat_var_list[[c]] %>% 
           dplyr::mutate(exposure = paste0(unique(dataset_temp[[sex_var]]), "_", cat_var_temp, "_", row.names(.)))%>% 
-          dplyr::relocate("exposure", .before = "Q1") %>% 
+          dplyr::relocate("exposure", .before = levels (dataset_temp[[main_exposure]])[1]) %>% 
           `row.names<-`(NULL) %>% 
           dplyr::slice(-c(1:2))
         
@@ -181,7 +176,7 @@ if(!is.null(categorical_vars)){
       cat_var_list[[c]] <- 
         cat_var_list[[c]] %>% 
         dplyr::mutate(exposure = paste0(cat_var_temp, "_", row.names(.))) %>% 
-        dplyr::relocate("exposure", .before = "Q1") %>% 
+        dplyr::relocate("exposure", .before = levels (dataset_temp[[main_exposure]])[1]) %>% 
         `row.names<-`(NULL) %>% 
         dplyr::slice(-c(1:2))
       }
@@ -193,12 +188,10 @@ if(!is.null(categorical_vars)){
       dataset_temp %>% 
           dplyr::group_by( .data[[cat_var_temp]] ) %>% 
           dplyr::summarise(
-            
             n = n(), 
             N = length( dataset_temp[[cat_var_temp]] ), 
-            prop100 = round((n/N)*100, n_decimals) 
-            
-          ) %>% 
+            prop100 = round((n/N)*100, n_decimals)
+            ) %>% 
           dplyr::select(all_of(cat_var_temp), prop100)
      
     
@@ -219,26 +212,20 @@ if(!is.null(categorical_vars)){
     
     # Return both dataframes 
     if(!is.null(numeric_vars) & !is.null(categorical_vars)){
-      
       df_stdz <- rbind(df_numeric_var, df_cat_var) 
       return(df_stdz)
-      
     }
     
     # Return DF of numeric variables 
     if(!is.null(numeric_vars) & is.null(categorical_vars)){
-      
       df_stdz <- df_numeric_var
-      return(df_stdz)
-      
+      return(df_stdz)   
     }
   
     # Return DF of categorical variables 
     if(is.null(numeric_vars) & !is.null(categorical_vars)){
-      
       df_stdz <- df_cat_var
       return(df_stdz)
-      
     }
   
   
