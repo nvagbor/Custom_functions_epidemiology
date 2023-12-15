@@ -112,7 +112,7 @@ if(!is.null(numeric_vars)){
   
   # 2. For CATEGORICAL VARIABLES ---
 
-  if(!sex_specific_analysis){
+  if(sex_specific_analysis == TRUE){
     
     dataset_temp <- 
       dataset %>% 
@@ -200,7 +200,7 @@ if(!is.null(categorical_vars)){
 }  
                      
   # 3. Get total number number of participants --- 
-   if(!get_sample_size) {
+   if(get_sample_size == TRUE) {
       
    N_all <- 
       dataset %>%
