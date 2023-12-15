@@ -68,8 +68,8 @@ if(!is.null(numeric_vars)){
         transmute(
           cat_var_lab = !!rlang::sym(paste0(num_var_temp, ".levels")),
           stdev       = !!sym(paste0(num_var_temp, ".se")) * sqrt( !!sym(paste0(num_var_temp, ".N.Freq")) ), 
-          mean_sd     = paste0(format( !!sym(paste0(num_var_temp, ".mean")), nsmall = n_decimals), 
-                               " (", format(stdev, nsmall = n_decimals), ")")
+          mean_sd     = paste0(format( round(!!sym(paste0(num_var_temp, ".mean")), n_decimals), nsmall = n_decimals), 
+                               " (", format(round(stdev, n_decimals), nsmall = n_decimals), ")")
           )  %>% 
         select(-stdev) %>% 
       
@@ -77,8 +77,8 @@ if(!is.null(numeric_vars)){
       
         mutate(
           exposure = num_var_temp, 
-          all = paste0(format(mean(dataset_temp [ , num_var_temp], na.rm = TRUE), nsmall = n_decimals), 
-                       " (", format(sd  (dataset_temp [ , num_var_temp], na.rm = TRUE), nsmall = n_decimals), ")")
+          all = paste0(format(round(mean(dataset_temp [ , num_var_temp], na.rm = TRUE), n_decimals), nsmall = n_decimals), 
+                       " (", format(round(sd  (dataset_temp [ , num_var_temp], na.rm = TRUE), n_decimals), nsmall = n_decimals), ")")
           ) %>% 
         relocate(.before = 1, exposure)
       
@@ -127,9 +127,9 @@ if(!is.null(categorical_vars)){
         categorical_vars = main_exposure,
         adjustment_vars  = adjustment_variables) %>% 
       
-      dplyr::mutate(across(contains("proportion"), ~format(.*100, nsmall = n_decimals)) %>% 
+      dplyr::mutate(across(contains("proportion"), ~format(round(.*100, n_decimals), nsmall = n_decimals))) %>% 
       select(contains(c("levels", "Freq", "proportion"))) %>% 
-      `row.names<-` (levels (dataset_temp[[main_exposure]]) %>%  
+      `row.names<-` (levels (dataset_temp[[main_exposure]])) %>%  
       t(.) %>% 
       `row.names<-` (
         str_replace_all(string      = row.names(.), 
@@ -168,7 +168,7 @@ if(!is.null(categorical_vars)){
           dplyr::summarise(
             n = n(), 
             N = length( dataset_temp[[cat_var_temp]] ), 
-            prop100 = format((n/N)*100, nsmall = n_decimals)
+            prop100 = format(round((n/N)*100, n_decimals), nsmall = n_decimals)
             ) %>% 
           dplyr::select(all_of(cat_var_temp), prop100)
     
