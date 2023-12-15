@@ -215,17 +215,17 @@ if(!is.null(categorical_vars)){
   # 4. Set conditions to return dataframe ---
     
     # Return both dataframes 
-    if(!is.null(numeric_vars) & !is.null(categorical_vars) & !get_sample_size){
+    if(!is.null(numeric_vars) & !is.null(categorical_vars) & get_sample_size){
       return( rbind(N_all, df_numeric_var, df_cat_var) )
     
     } 
    
-   if (!is.null(numeric_vars) & is.null(categorical_vars) & !get_sample_size){
+   if (!is.null(numeric_vars) & is.null(categorical_vars) & get_sample_size){
       # Return DF of numeric variables only
        return(N_all, df_numeric_var)   
     
     }
-   if (is.null(numeric_vars) & !is.null(categorical_vars) & !get_sample_size) {
+   if (is.null(numeric_vars) & !is.null(categorical_vars) & get_sample_size) {
       # Return DF of categorical variables only
        return(N_all, df_cat_var)
     }
