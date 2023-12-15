@@ -19,7 +19,22 @@ make_standardised_ckb_data <- function(
    n_decimals = 1
    ) {
 
+  # Load custom function --- 
+   ## Transpose a dataframe using dplyr 
 
+      df_transpose <- function(df) {
+           first_name <- colnames(df)[1]
+         
+           temp <-
+             df %>% 
+             tidyr::pivot_longer(-1) %>%
+             tidyr::pivot_wider(names_from = 1, values_from = value)
+         
+           colnames(temp)[1] <- first_name
+         
+         return(temp)
+      }
+   
   # Checks ---
   
     if(missing(main_exposure)) stop("please enter `main exposure`")
@@ -94,7 +109,7 @@ if(!is.null(numeric_vars)){
 }
   
   
-  ## 2. For CATEGORICAL VARIABLES ---
+  # 2. For CATEGORICAL VARIABLES ---
 
   if(!sex_specific_analysis){
     
@@ -183,20 +198,28 @@ if(!is.null(categorical_vars)){
   
 }  
                      
-  
-  # 3. Set conditions to return dataframe ---
+  # 3. Get total number number of participants --- 
+   N_all <- 
+      dataset %>%
+      dplyr::group_by(.data[[main_exposure]]) %>%
+      dplyr::summarise(N = format(n(), big.mark = ",", scientific = FALSE)) %>%
+      rename("exposure" = all_of(main_exposure)) %>%
+      df_transpose(.) %>%  # Custom function 
+      mutate(all = format(nrow(dataset), big.mark = ",", scientific = FALSE))
+                          
+  # 4. Set conditions to return dataframe ---
     
     # Return both dataframes 
     if(!is.null(numeric_vars) & !is.null(categorical_vars)){
-      return( rbind(df_numeric_var, df_cat_var) )
+      return( rbind(N_all, df_numeric_var, df_cat_var) )
     
     } else if (!is.null(numeric_vars) & is.null(categorical_vars)){
       # Return DF of numeric variables only
-       return(df_numeric_var)   
+       return(N_all, df_numeric_var)   
     
     }else{
       # Return DF of categorical variables only
-       return(df_cat_var)
+       return(N_all, df_cat_var)
     }
   
 # End of Function
