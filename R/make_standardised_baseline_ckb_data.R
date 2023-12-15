@@ -14,6 +14,7 @@ make_standardised_ckb_data <- function(
    categorical_vars = NULL, 
    categorical_vars_labels = NULL, ## Preferable to not have this in
    adjustment_variables, 
+   get_sample_size = FALSE,
    sex_specific_analysis = FALSE, ## To perform analyses for men and women (could be any other categorical variable)
    sex_var = NULL,
    n_decimals = 1
@@ -199,6 +200,8 @@ if(!is.null(categorical_vars)){
 }  
                      
   # 3. Get total number number of participants --- 
+   if(!get_sample_size) {
+      
    N_all <- 
       dataset %>%
       dplyr::group_by(.data[[main_exposure]]) %>%
@@ -206,18 +209,23 @@ if(!is.null(categorical_vars)){
       rename("exposure" = all_of(main_exposure)) %>%
       df_transpose(.) %>%  # Custom function 
       mutate(all = format(nrow(dataset), big.mark = ",", scientific = FALSE))
+      
+   }
                           
   # 4. Set conditions to return dataframe ---
     
     # Return both dataframes 
-    if(!is.null(numeric_vars) & !is.null(categorical_vars)){
+    if(!is.null(numeric_vars) & !is.null(categorical_vars) & !get_sample_size){
       return( rbind(N_all, df_numeric_var, df_cat_var) )
     
-    } else if (!is.null(numeric_vars) & is.null(categorical_vars)){
+    } 
+   
+   if (!is.null(numeric_vars) & is.null(categorical_vars) & !get_sample_size){
       # Return DF of numeric variables only
        return(N_all, df_numeric_var)   
     
-    }else{
+    }
+   if (is.null(numeric_vars) & !is.null(categorical_vars) & !get_sample_size) {
       # Return DF of categorical variables only
        return(N_all, df_cat_var)
     }
