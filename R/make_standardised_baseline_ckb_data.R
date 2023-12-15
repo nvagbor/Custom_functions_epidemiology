@@ -225,7 +225,7 @@ if(!is.null(categorical_vars)){
    if (!is.null(numeric_vars) & is.null(categorical_vars) & get_sample_size == TRUE){
        return(N_all, df_numeric_var)   
     
-    } else if {
+    } else if (!is.null(numeric_vars) & is.null(categorical_vars)) {
        return(df_numeric_var)
       }
    
