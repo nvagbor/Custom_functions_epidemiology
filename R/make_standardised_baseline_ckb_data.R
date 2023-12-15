@@ -182,27 +182,22 @@ if(!is.null(categorical_vars)){
   df_cat_var <- dplyr::bind_rows(cat_var_list)
   
 }  
- 
+                     
   
   # 3. Set conditions to return dataframe ---
     
     # Return both dataframes 
     if(!is.null(numeric_vars) & !is.null(categorical_vars)){
-      df_stdz <- rbind(df_numeric_var, df_cat_var) 
-      return(df_stdz)
-    }
+      return( rbind(df_numeric_var, df_cat_var) )
     
-    # Return DF of numeric variables 
-    if(!is.null(numeric_vars) & is.null(categorical_vars)){
-      df_stdz <- df_numeric_var
-      return(df_stdz)   
+    } else if (!is.null(numeric_vars) & is.null(categorical_vars)){
+      # Return DF of numeric variables only
+       return(df_numeric_var)   
+    
+    }else{
+      # Return DF of categorical variables only
+       return(df_cat_var)
     }
-  
-    # Return DF of categorical variables 
-    if(is.null(numeric_vars) & !is.null(categorical_vars)){
-      df_stdz <- df_cat_var
-      return(df_stdz)
-    } 
   
 # End of Function
 }
