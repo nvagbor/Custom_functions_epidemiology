@@ -27,7 +27,7 @@ Cox_shape_strength_data <- function(
     left_side <- paste0("Surv(", fu.time, ", ", event_var, ")")
 
     # Fit a stratified model? 
-    if(!is.missing(stratify_vars)){
+    if(!missing(stratify_vars)){
       strata_vars <- paste0("strata(",  paste(stratify_vars, collapse = ", "),  ")" )
       adjustment_vars <- adjustment_vars[!adjustment_vars %in% stratify_vars]   # Do not adjust for stratifying vars
       }
@@ -39,7 +39,7 @@ Cox_shape_strength_data <- function(
       
       # Make formula
       covariates <- paste(c(exposure_var_cat, adjustment_vars), collapse=" + ")
-      if(!is.missing(stratify_vars)){
+      if(!missing(stratify_vars)){
         form <- as.formula(paste0(left_side, " ~ ", paste(covariates, strata_vars, sep=" + ") ))
         }else{
           form <- as.formula(paste0(left_side, " ~ ", covariates))
@@ -101,7 +101,7 @@ Cox_shape_strength_data <- function(
       # Make formula
       covariates   <- paste(c(exposure_var_cont,adjustment_vars), collapse = " + ")
 
-      if(!is.missing(stratify_vars)){
+      if(!missing(stratify_vars)){
         form <- as.formula(paste0(left_side, " ~ ", paste(covariates, strata_vars, sep=" + ")))
         }else{
         form <- as.formula(paste0(left_side, " ~ ", covariates))
@@ -132,7 +132,7 @@ Cox_shape_strength_data <- function(
       
       # Make formula
       covariates   <- paste(c(exposure_var_cont,adjustment_vars), collapse = " + ")
-      if(!is.missing(stratify_vars)){
+      if(!missing(stratify_vars)){
         form <- as.formula(paste0(left_side, " ~ ", paste(covariates, strata_vars, sep=" + ")))
         }else{
         form <- as.formula(paste0(left_side, " ~ ", covariates))
