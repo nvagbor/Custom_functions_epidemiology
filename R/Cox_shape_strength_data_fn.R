@@ -95,9 +95,6 @@ Cox_shape_strength_data <- function(
       if(!is.null(exposure_var_cat)){ 
         stop("`exposure_var_cat` must be set to NULL if `expo_type_continuous` == TRUE\n")}
       
-      if(!is.null(exposure_var_sd)){ 
-        stop("`exposure_var_sd` must be set to NULL if `expo_type_continuous` == TRUE\n")}
-      
       # Make formula
       covariates   <- paste(c(exposure_var_cont,adjustment_vars), collapse = " + ")
 
