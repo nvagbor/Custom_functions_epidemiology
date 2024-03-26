@@ -39,7 +39,7 @@ Cox_shape_strength_data <- function(
       
       # Make formula
       covariates <- paste(c(exposure_var_cat, adjustment_vars), collapse=" + ")
-      if(!is.missing(stratify_vars){
+      if(!is.missing(stratify_vars)){
         form <- as.formula(paste0(left_side, " ~ ", paste(covariates, strata_vars, sep=" + ") ))
         }else{
           form <- as.formula(paste0(left_side, " ~ ", covariates))
@@ -101,7 +101,7 @@ Cox_shape_strength_data <- function(
       # Make formula
       covariates   <- paste(c(exposure_var_cont,adjustment_vars), collapse = " + ")
 
-      if(!is.missing(stratify_vars){
+      if(!is.missing(stratify_vars)){
         form <- as.formula(paste0(left_side, " ~ ", paste(covariates, strata_vars, sep=" + ")))
         }else{
         form <- as.formula(paste0(left_side, " ~ ", covariates))
@@ -132,7 +132,7 @@ Cox_shape_strength_data <- function(
       
       # Make formula
       covariates   <- paste(c(exposure_var_cont,adjustment_vars), collapse = " + ")
-      if(!is.missing(stratify_vars){
+      if(!is.missing(stratify_vars)){
         form <- as.formula(paste0(left_side, " ~ ", paste(covariates, strata_vars, sep=" + ")))
         }else{
         form <- as.formula(paste0(left_side, " ~ ", covariates))
